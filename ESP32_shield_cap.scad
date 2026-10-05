@@ -1,6 +1,6 @@
 // =====================================================================
 // ESP32_shield_cap.scad  –  Kapje voor ESP32-C6 ZARLAR shield v2.0 (iTroniX)
-// Versie : v1.3
+// Versie : v1.4
 // Datum  : 2026-10-05
 // Auteur : FiDel / Claude
 // Wijzigingen:
@@ -13,6 +13,8 @@
 //   v1.2  Wandsleuven onderaan open (tot op het plankje), zodat het kapje
 //         over de aangesloten kabels schuift.
 //   v1.3  iTroniX-logo + naam verzonken in het dak (bestand itronix_logo.svg).
+//   v1.4  itronix_logo.svg vervangen door versie uit het originele .ai-bestand
+//         (1200 dpi, scherpere contouren).
 // ---------------------------------------------------------------------
 // Assenstelsel: oorsprong = linkeronderhoek PCB (tekst "ESP32-C6 ZARLAR
 //   shield" onderaan, RJ45 rechts, antenne boven), z = 0 = plankje.
