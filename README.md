@@ -25,4 +25,10 @@ Vooraf bedankt!
 Filip Delannoy
 0477743888"
 
-2) ESP32_shield_cap: Kapje op het ESP32C6 shield, met openingen voor alle kabels.
+2) ESP32_shield_cap: Het kapje is een rechthoekige doos zonder bodem. Het dekt de ESP32-C6 ZARLAR shield af, die met 4 hoekschroeven rechtstreeks op een plankje vastzit. De rand van het kapje zakt tot op het plankje. Het kapje klikt vast met taps toelopende klemnokjes op de PCB-rand en heeft geen eigen schroeven nodig.
+
+Doorvoeren: alle doorvoeren voor kabels zitten in de zijwanden, als sleuven die onderaan open zijn. Je kunt het kapje dus over de aangesloten kabels schuiven.
+Antenne: de antenne van de ESP32 steekt door een sleuf in de bovenwand naar buiten, zodat de behuizing het signaal niet hindert.
+Dak: het dak is dicht, met het iTroniX-logo en de naam 0,6 mm verzonken.
+
+3) 
