@@ -24,3 +24,5 @@ Laat je mij weten als je nog extra info nodig hebt aub?
 Vooraf bedankt!
 Filip Delannoy
 0477743888"
+
+2) ESP32_shield_cap: Kapje op het ESP32C6 shield, met openingen voor alle kabels.
