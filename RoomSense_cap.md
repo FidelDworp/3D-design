@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Onderdeel** | 3D-geprint afdekkapje voor de RoomSenseboX v3.0 PCB (iTroniX) |
-| **Versie** | v1.1 – 2026-10-05 |
+| **Versie** | v1.4 – 2026-10-05 |
 | **Bronbestand** | `RoomSense_cap.scad` (OpenSCAD, volledig parametrisch) |
-| **Printbestand** | `RoomSense_cap.stl` |
+| **Printbestand** | `RoomSense_cap.stl` (met ingebouwde steunvinnen) |
 | **PCB-referentie** | Eagle `RoomsenseboX-v3.0.brd` (export `RoomsenseboX-v3.0-brd-RD-dim.pdf`) |
 
 ## 1. Beschrijving
@@ -94,6 +94,30 @@ In de code zet `upos(hoek, straal)` een hoek uit deze conventie om naar XY.
 
 De nokjes vermijden de schroeven, de RJ45 en de hoeken van de DHT22.
 
+### 3.4 Ingebouwde wegbreekbare steunvinnen
+
+Aan de flauwe kant loopt de kegel maar ±20° op. Die binnenkant kan daarom niet zonder steun geprint worden. De steun zit in het model zelf, zodat de slicer **geen** support hoeft toe te voegen.
+
+| Item | Waarde | Parameter |
+|---|---|---|
+| Aantal vinnen | 16, radiaal vanuit de PIR-top, gelijk verdeeld | `sup_n` |
+| Hoekbereik | −40° … 220° (wiskundig, 0° = +X). De steile RJ45-kant blijft vrij. | `sup_from`, `sup_to` |
+| Dikte vin | 0,8 mm (2 perimeters) | `sup_t` |
+| Start / max. straal | 8 mm rond de PIR-top / 34 mm rond het PCB-midden (vrij van richel en klemnokjes) | `sup_r0`, `sup_rmax` |
+| Spleet vin ↔ kegel | 0,3 mm | `sup_gap` |
+| Verbinding | Tandjes van 0,8 × 0,8 mm, om de 5 mm langs de vin | `sup_tooth`, `sup_pitch` |
+| Verbindingsring op het bed | Straal 14 mm rond de PIR-top, 1,2 mm breed, 0,6 mm hoog. **Raakt het kapje nergens.** | `sup_ring_r`, `sup_ring_w`, `sup_ring_h` |
+| Uitgesloten zones | DHT22-vak en RJ45-tunnel | – |
+| Aan / uit | `true` | `sup_on` |
+
+**Overspanning:** tussen de vinnen is de overspanning maximaal ±15 mm, aan de buitenrand.
+
+**Wegnemen:** het steunskelet hangt alleen via de tandjes aan de kegel, en de ring houdt de vinnen samen. Wrik het op één plaats los en trek of draai het er in één stuk uit.
+
+Twee kleine uitzonderingen:
+- **Losse vin:** de vin het dichtst bij het DHT22-vak haalt de ring niet en moet apart weg.
+- **Hoek naast het DHT22-vak:** de hoek tussen het vak en de buitenrand heeft geen vin.
+
 **Montage:** schroef eerst de PCB vast met de 4 schroeven. Druk daarna het kapje recht over de PCB tot de rand tegen het plafond zit. De RJ45-stekker kan erin blijven zitten.
 
 ## 4. Printen
@@ -104,13 +128,14 @@ De nokjes vermijden de schroeven, de RJ45 en de hoeken van de DHT22.
 | Nozzle | 0,4 mm |
 | Laaghoogte | 0,2 mm |
 | Oriëntatie | Rand op het bed (zoals gemodelleerd) |
-| Support | Tree supports **binnenin**, voor de flauwe kegelzijde (±20°) |
-| Gewicht / tijd (schatting) | ±15–20 g, ±1,5–2 u per stuk |
+| Support | **Uit in de slicer.** De steunvinnen zitten in het STL-bestand (§ 3.4). |
+| Gewicht / tijd (schatting) | ±15–20 g kapje + enkele gram steun, ±1,5–2 u per stuk |
 
 **Proefprint eerst!** Controleer:
 1. **Klemkracht:** zit het kapje te stroef, verlaag `clip_interf` (bv. 0,2). Zit het te los, verhoog die waarde.
 2. **PIR-lens:** past de schuine lens vrij door de opening van Ø 15 mm?
 3. **Hoge componenten:** blijven de LDR en de DS18B20 vrij van de binnenkant van de kegel?
+4. **Steunskelet:** komt het vlot in één stuk los? Is de binnenkant tussen de vinnen netjes? Zakt het te veel door, verhoog dan `sup_n`. Breekt het te moeilijk af, verklein dan `sup_tooth` of vergroot `sup_gap`.
 
 ## 5. Aanpassen en exporteren
 
@@ -132,3 +157,6 @@ Werk bij elke wijziging de versiekop in het `.scad`-bestand bij, en ook de versi
 |---|---|---|
 | v1.0 | 2026-10-05 | Eerste versie: AM312 PIR (excentrisch, scheve kegel), Ø 80 mm zonder schroefgaten, klemribbels + binnenrichel, RJ45-tunnel, DHT22-vak, 2 roosters, verstevigingsringen rond LDR- en roostergat |
 | v1.1 | 2026-10-05 | Verstevigingsringen verwijderd. Klemnokjes taps gemaakt: driehoekig profiel + invoerschuinte van 1,2 mm. |
+| v1.2 | 2026-10-05 | Ingebouwde wegbreekbare steunvinnen onder de flauwe kegelzijde (radiaal, 0,3 mm spleet + tandjes) |
+| v1.3 | 2026-10-05 | Maximaal 10 vinnen, onderaan verbonden met een losse ring op het bed, zodat het steunskelet in één stuk loskomt |
+| v1.4 | 2026-10-05 | `sup_n` van 10 naar 16: overspanning tussen de vinnen ±15 mm |

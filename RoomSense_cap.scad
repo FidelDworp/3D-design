@@ -1,6 +1,6 @@
 // =====================================================================
 // RoomSense_cap.scad  –  Kapje voor RoomSenseboX v3.0 PCB (iTroniX)
-// Versie : v1.1
+// Versie : v1.4
 // Datum  : 2026-10-05
 // Auteur : FiDel / Claude
 // Wijzigingen:
@@ -8,13 +8,18 @@
 //         klemribbels + binnenrichel, RJ45-tunnel, DHT22-vak, 2 roosters.
 //   v1.1  Verstevigingsringen rond LDR- en roostergat verwijderd.
 //         Klemnokjes taps: driehoekig profiel (crush rib) + lange invoerschuinte.
+//   v1.2  Ingebouwde wegbreekbare steunvinnen onder de flauwe kegelzijde
+//         (radiaal vanuit de PIR-top, 0,3 mm spleet + dunne tandjes).
+//   v1.3  Max. 10 steunvinnen (gelijk verdeeld), onderaan verbonden met een
+//         dunne ring op het bed -> steunskelet komt in een stuk los.
+//   v1.4  sup_n 10 -> 16: kortere overspanning tussen de vinnen (±15 mm).
 // ---------------------------------------------------------------------
 // Assenstelsel (bovenaanzicht):
 //   oorsprong = middelpunt PCB, z = 0 = onderkant PCB (= plafond/wand)
 //   Hoeken zoals afgesproken: 0° = RJ45 (-Y), 90° = LDR (-X),
 //   270° = DHT22 (+X).  Posities uit Eagle-layout RoomsenseboX-v3.0.brd
-// Printen: rand op het bed, PLA/PETG, 0,4 mm nozzle, steun (tree)
-//          binnenin aanbevolen voor de flauwe kegelzijde.
+// Printen: rand op het bed, PLA/PETG, 0,4 mm nozzle, ZONDER slicer-support:
+//          de steunvinnen zitten in het model (sup_on). Na het printen wegbreken.
 // =====================================================================
 
 $fn = 120;
@@ -71,6 +76,21 @@ ridge_w     = 1.5;   // binnenrichel op PCB-bovenkant
 ridge_h     = 1.5;
 screws      = [[27.4,18.8],[-26.8,18.2],[18.5,-27.0],[-17.9,-27.4]]; // PCB-montagegaten
 screw_head_d = 7;    // vrijloop rond schroefkop
+
+/* [Wegbreekbare steunvinnen] */
+sup_on     = true;
+sup_t      = 0.8;    // dikte vin (2 perimeters)
+sup_gap    = 0.3;    // spleet tussen vin en kegel
+sup_tooth  = 0.8;    // lengte tandje (verbinding vin <-> kegel)
+sup_pitch  = 5;      // afstand tussen tandjes langs de vin
+sup_n      = 16;     // aantal vinnen (gelijk verdeeld over het hoekbereik)
+sup_ring_r = 14;     // straal verbindingsring rond de PIR-top (raakt enkel de vinnen)
+sup_ring_w = 1.2;    // breedte ring
+sup_ring_h = 0.6;    // hoogte ring (3 lagen)
+sup_from   = -40;    // hoekbereik (wiskundig, 0 = +X) ...
+sup_to     = 220;    // ... steile RJ45-kant (-Y) blijft vrij
+sup_r0     = 8;      // vinnen starten op deze straal rond de PIR-top
+sup_rmax   = 34;     // max. straal t.o.v. PCB-midden (vrij van richel en klemnokjes)
 
 // ---------------------------------------------------------------------
 function upos(a, r) = [-r*sin(a), -r*cos(a)];   // gebruikershoek -> XY
@@ -155,6 +175,53 @@ module clips()
         }
 
 // =====================================================================
+// --- wegbreekbare steunvinnen ---
+module sup_slabs()
+    translate([0, -pir_ecc, 0])
+        for (i=[0 : sup_n - 1]) rotate([0,0, sup_from + i*(sup_to - sup_from)/(sup_n - 1)])
+            translate([sup_r0, -sup_t/2, 0]) cube([70, sup_t, 40]);
+
+module sup_keepout()   // gebied waar geen vinnen mogen komen
+    union() {
+        // DHT22-vak + wanden
+        at_angle(dht_ang) translate([dht_in - clr - wall - sup_gap, -dht_len/2 - clr - wall - sup_gap, -1])
+            cube([R, dht_len + 2*(clr + wall + sup_gap), 50]);
+        // RJ45-tunnel
+        at_angle(0) translate([rj_back - clr - wall - sup_gap, rj_off - rj_w/2 - clr - wall - sup_gap, -1])
+            cube([R, rj_w + 2*(clr + wall + sup_gap), 50]);
+    }
+
+module sup_area()
+    difference() { cylinder(r=sup_rmax, h=50); sup_keepout(); }
+
+module sup_fins()
+    intersection() {
+        sup_slabs();
+        sup_area();
+        union() {
+            translate([0,0,-sup_gap]) inner_cone();
+            cylinder(r=sup_rmax, h=pcb_t + ridge_h);   // onderste deel tot op het bed
+        }
+    }
+
+module sup_teeth()
+    intersection() {
+        sup_slabs();
+        sup_area();
+        difference() { inner_cone(); translate([0,0,-sup_gap - 0.01]) inner_cone(); }
+        translate([0, -pir_ecc, 0])
+            for (d=[sup_r0 + 2 : sup_pitch : 70])
+                difference() { cylinder(r=d + sup_tooth/2, h=40); translate([0,0,-1]) cylinder(r=d - sup_tooth/2, h=42); }
+    }
+
+module sup_ring()
+    translate([0, -pir_ecc, 0]) difference() {
+        cylinder(r=sup_ring_r + sup_ring_w/2, h=sup_ring_h);
+        translate([0,0,-1]) cylinder(r=sup_ring_r - sup_ring_w/2, h=sup_ring_h + 2);
+    }
+
+module supports() { sup_fins(); sup_teeth(); sup_ring(); }
+
 module cap() {
     difference() {
         union() {
@@ -175,3 +242,7 @@ module cap() {
 }
 
 cap();
+if (sup_on) difference() {   // steun niet in openingen laten uitsteken
+    supports();
+    translate([0,-pir_ecc,-1]) cylinder(d=pir_hole_d, h=60);
+}
