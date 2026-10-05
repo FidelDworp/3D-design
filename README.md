@@ -23,5 +23,4 @@ Laat je mij weten als je nog extra info nodig hebt aub?
 
 Vooraf bedankt!
 Filip Delannoy
-0477743888
--------------------"
+0477743888"
