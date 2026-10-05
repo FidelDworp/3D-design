@@ -14,10 +14,10 @@ RoomSense_cap.stl
 
 Keuzes:
 
-Materiaal: PETG, PLA of PLA+ (5 in ZWART, 5 in WIT)
-Laaghoogte 0,2 mm
-Printen met de rand op het bed
-Tree supports binnenin.
+- Materiaal: PETG, PLA of PLA+ (5 in ZWART, 5 in WIT)
+- Laaghoogte 0,2 mm
+- Printen met de rand op het bed
+- Tree supports binnenin.
 
 Laat je mij weten als je nog extra info nodig hebt aub?
 
